@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { ExternalLink, History } from "lucide-react";
 import { type ActivityItem, readActivities } from "../lib/activity";

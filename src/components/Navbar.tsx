@@ -1,3 +1,5 @@
+"use client";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { BadgeCheck } from "lucide-react";
 
@@ -10,7 +12,7 @@ export const Navbar = () => {
             <BadgeCheck className="w-6 h-6 text-white" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent font-mono">
-            FANBADGE
+            Efans Nft
           </span>
         </div>
         <ConnectButton />

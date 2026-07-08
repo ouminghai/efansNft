@@ -32,13 +32,11 @@ npm run dev
 ```
 
 ### 4. 部署到 Vercel
-项目已包含 [vercel.json](/Users/ouminghai/Library/Mobile%20Documents/com~apple~CloudDocs/code/web3intern/efansNft/vercel.json:1)，默认使用以下配置:
+项目当前使用 Next.js，已包含 [vercel.json](/Users/ouminghai/Library/Mobile%20Documents/com~apple~CloudDocs/code/web3intern/efansNft/vercel.json:1)，默认使用以下配置:
 
 ```bash
-Framework: Vite
+Framework: Next.js
 Install Command: npm install
-Build Command: npm run build
-Output Directory: dist
 ```
 
 部署步骤:
@@ -67,3 +65,4 @@ npm run build
 - Monad RPC 目前使用的是 `https://rpc-devnet.monadinfra.com`，请根据最新的测试网文档进行调整。
 - Vercel 线上环境如需 WalletConnect，请配置 `VITE_WALLETCONNECT_PROJECT_ID`。
 - 上线前请确认钱包网络为 Monad Testnet，并验证 `FAN_BADGE_NFT_ADDRESS` 与 `POINT_SYSTEM_ADDRESS` 已替换为真实部署地址。
+- Next.js 版本请使用 `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID` 作为 WalletConnect 配置。

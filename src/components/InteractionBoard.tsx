@@ -1,3 +1,5 @@
+"use client";
+
 import { useAccount, usePublicClient, useWriteContract } from "wagmi";
 import { POINT_SYSTEM_ABI, POINT_SYSTEM_ADDRESS } from "../constants/abis";
 import { Calendar, Heart, Music, Vote, ArrowUpCircle, Loader2 } from "lucide-react";

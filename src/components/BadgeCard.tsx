@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
 import { FAN_BADGE_NFT_ABI, FAN_BADGE_NFT_ADDRESS } from "../constants/abis";
@@ -120,7 +122,7 @@ export const BadgeCard = () => {
           onClick={handleMint}
         >
           {isMinting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          Mint Initial Badge
+          初始化勋章
         </button>
       </div>
     );

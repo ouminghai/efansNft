@@ -1,3 +1,5 @@
+"use client";
+
 import { Navbar } from "./components/Navbar";
 import { BadgeCard } from "./components/BadgeCard";
 import { PointsDisplay } from "./components/PointsDisplay";
@@ -62,11 +64,11 @@ function App() {
             {/* Left Column: Profile & Points */}
             <div className="lg:col-span-4 space-y-6">
               <section>
-                <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Your Badge</h2>
+                <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">徽章</h2>
                 <BadgeCard />
               </section>
               <section>
-                <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Stats</h2>
+                <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">等级信息</h2>
                 <PointsDisplay />
               </section>
             </div>
@@ -75,7 +77,7 @@ function App() {
             <div className="lg:col-span-8 space-y-6">
               <section>
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">Interaction Hub</h2>
+                  <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest">互动中心</h2>
                   <span className="flex items-center gap-1.5 text-xs text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full font-medium">
                     <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
                     Monad Testnet Active

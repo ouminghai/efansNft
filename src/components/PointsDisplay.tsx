@@ -1,3 +1,5 @@
+"use client";
+
 import { useAccount, useReadContract } from "wagmi";
 import { POINT_SYSTEM_ABI, POINT_SYSTEM_ADDRESS } from "../constants/abis";
 import { Coins, TrendingUp } from "lucide-react";

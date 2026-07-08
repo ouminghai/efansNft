@@ -1,6 +1,4 @@
 {
-  "framework": "vite",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
+  "framework": "nextjs",
   "installCommand": "npm install --legacy-peer-deps"
 }
