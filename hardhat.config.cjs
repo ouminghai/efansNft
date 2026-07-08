@@ -1,12 +1,18 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
+
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
   solidity: {
-    version: "0.8.24",
+    version: "0.8.28",
     settings: {
       evmVersion: "cancun",
+      metadata: {
+        bytecodeHash: "ipfs", // Required for Sourcify verification
+      },
       optimizer: {
         enabled: true,
         runs: 200,
@@ -15,8 +21,44 @@ module.exports = {
   },
   networks: {
     monadTestnet: {
-      url: "https://rpc-devnet.monadinfra.com", // Example RPC for Monad Devnet/Testnet
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      url: "https://testnet-rpc.monad.xyz",
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+      chainId: 10143,
     },
+    monadMainnet: {
+      url: "https://rpc.monad.xyz",
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : [],
+      chainId: 143,
+    },
+  },
+  sourcify: {
+    enabled: true,
+    apiUrl: "https://sourcify-api-monad.blockvision.org",
+    browserUrl: "https://testnet.monadvision.com",
+  },
+  etherscan: {
+    enabled: true,
+    apiKey: {
+      monadTestnet: ETHERSCAN_API_KEY,
+      monadMainnet: ETHERSCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "monadTestnet",
+        chainId: 10143,
+        urls: {
+          apiURL: "https://api.etherscan.io/v2/api?chainid=10143",
+          browserURL: "https://testnet.monadscan.com",
+        },
+      },
+      {
+        network: "monadMainnet",
+        chainId: 143,
+        urls: {
+          apiURL: "https://api.etherscan.io/v2/api?chainid=143",
+          browserURL: "https://monadscan.com",
+        },
+      },
+    ],
   },
 };

@@ -1,6 +1,7 @@
 import { useAccount, useReadContract } from "wagmi";
 import { POINT_SYSTEM_ABI, POINT_SYSTEM_ADDRESS } from "../constants/abis";
 import { Coins, TrendingUp } from "lucide-react";
+import { useMemo } from "react";
 
 export const PointsDisplay = () => {
   const { address, isConnected } = useAccount();
@@ -15,6 +16,17 @@ export const PointsDisplay = () => {
       refetchInterval: 5000,
     },
   });
+
+  const nextLevelCost = useMemo(() => {
+    const currentPoints = Number(points ?? 0n);
+    const baseCost = 50;
+    const deficit = Math.max(baseCost - currentPoints, 0);
+
+    return {
+      baseCost,
+      deficit,
+    };
+  }, [points]);
 
   if (!isConnected) return null;
 
@@ -38,9 +50,11 @@ export const PointsDisplay = () => {
       <div className="p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-emerald-500" />
-          <span className="text-xs text-zinc-400">Next Level Cost</span>
+          <span className="text-xs text-zinc-400">
+            {nextLevelCost.deficit === 0 ? "Upgrade Ready" : `${nextLevelCost.deficit} pts to next level`}
+          </span>
         </div>
-        <span className="text-xs font-bold text-white">50 PTS</span>
+        <span className="text-xs font-bold text-white">{nextLevelCost.baseCost} PTS</span>
       </div>
     </div>
   );

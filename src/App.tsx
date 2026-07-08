@@ -2,12 +2,18 @@ import { Navbar } from "./components/Navbar";
 import { BadgeCard } from "./components/BadgeCard";
 import { PointsDisplay } from "./components/PointsDisplay";
 import { InteractionBoard } from "./components/InteractionBoard";
+import { LiveActivity } from "./components/LiveActivity";
 import { Toaster } from "react-hot-toast";
-import { useAccount } from "wagmi";
-import { Sparkles } from "lucide-react";
+import { useAccount, useChainId, useSwitchChain } from "wagmi";
+import { Sparkles, AlertCircle } from "lucide-react";
+import { monadTestnet } from "./lib/chains";
 
 function App() {
   const { isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
+
+  const isWrongNetwork = isConnected && chainId !== monadTestnet.id;
 
   return (
     <div className="min-h-screen bg-black text-zinc-100 font-sans selection:bg-purple-500/30">
@@ -21,6 +27,24 @@ function App() {
       }} />
 
       <main className="max-w-7xl mx-auto px-4 pt-24 pb-12">
+        {isWrongNetwork && (
+          <div className="mb-8 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-500" />
+              <div>
+                <p className="text-amber-500 font-semibold text-sm">Wrong Network</p>
+                <p className="text-amber-500/70 text-xs">Please switch to Monad Testnet to interact with the DApp.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => switchChain({ chainId: monadTestnet.id })}
+              className="px-4 py-1.5 bg-amber-500 text-black text-xs font-bold rounded-lg hover:bg-amber-400 transition-colors"
+            >
+              Switch Network
+            </button>
+          </div>
+        )}
+
         {!isConnected ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-20 h-20 bg-purple-600/20 rounded-full flex items-center justify-center mb-6 animate-pulse">
@@ -65,9 +89,7 @@ function App() {
               {/* Recent Activity Placeholder */}
               <section>
                 <h2 className="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Live Activity</h2>
-                <div className="bg-zinc-900 rounded-2xl border border-zinc-800 p-8 text-center">
-                  <p className="text-zinc-500 text-sm">Recent on-chain interactions will appear here...</p>
-                </div>
+                <LiveActivity />
               </section>
             </div>
           </div>

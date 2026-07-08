@@ -4,25 +4,13 @@ import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultConfig, RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import { WagmiProvider } from "wagmi";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { defineChain } from "viem";
 import App from "./App.tsx";
 import "./index.css";
-
-const monadTestnet = defineChain({
-  id: 10143, // Example Monad Testnet ID
-  name: "Monad Testnet",
-  nativeCurrency: { name: "MON", symbol: "MON", decimals: 18 },
-  rpcUrls: {
-    default: { http: ["https://rpc-devnet.monadinfra.com"] },
-  },
-  blockExplorers: {
-    default: { name: "MonadExplorer", url: "https://explorer.monad.xyz" },
-  },
-});
+import { monadTestnet } from "./lib/chains";
 
 const config = getDefaultConfig({
   appName: "FanBadge DApp",
-  projectId: "YOUR_PROJECT_ID", // In a real app, this would be from WalletConnect
+  projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "fanbadge-local-dev",
   chains: [monadTestnet],
   ssr: false,
 });
