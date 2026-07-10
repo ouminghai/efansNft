@@ -10,6 +10,7 @@ module.exports = {
     version: "0.8.28",
     settings: {
       evmVersion: "cancun",
+      viaIR: true,
       metadata: {
         bytecodeHash: "ipfs", // Required for Sourcify verification
       },

@@ -12,12 +12,13 @@ contract FanBadgeNFT is ERC721, ERC721Enumerable, Ownable {
 
     uint256 private _nextTokenId;
     mapping(uint256 => uint256) public badgeLevels;
+    mapping(uint256 => uint256) public mintTimestamps;
     address public pointSystem;
 
     event BadgeMinted(address indexed user, uint256 tokenId);
     event BadgeUpgraded(uint256 indexed tokenId, uint256 newLevel);
 
-    constructor() ERC721("Monad Fan Badge", "MFB") Ownable(msg.sender) {}
+    constructor() ERC721("Eason Fan Community Badge", "EASON") Ownable(msg.sender) {}
 
     function setPointSystem(address _pointSystem) external onlyOwner {
         pointSystem = _pointSystem;
@@ -28,6 +29,7 @@ contract FanBadgeNFT is ERC721, ERC721Enumerable, Ownable {
         uint256 tokenId = _nextTokenId++;
         _safeMint(msg.sender, tokenId);
         badgeLevels[tokenId] = 1;
+        mintTimestamps[tokenId] = block.timestamp;
         emit BadgeMinted(msg.sender, tokenId);
     }
 
@@ -37,13 +39,22 @@ contract FanBadgeNFT is ERC721, ERC721Enumerable, Ownable {
         emit BadgeUpgraded(tokenId, badgeLevels[tokenId]);
     }
 
+    function getRole(uint256 level) public pure returns (string memory) {
+        if (level >= 10) return "Legendary Fan";
+        if (level >= 7) return "Diamond Fan";
+        if (level >= 5) return "Platinum Fan";
+        if (level >= 3) return "Gold Fan";
+        return "Silver Fan";
+    }
+
     function tokenURI(uint256 tokenId) public view override returns (string memory) {
         _requireOwned(tokenId);
         uint256 level = badgeLevels[tokenId];
+        string memory role = getRole(level);
         
-        string memory name = string(abi.encodePacked("Monad Fan Badge #", tokenId.toString()));
-        string memory description = "A dynamic NFT representing your loyalty in the Monad ecosystem.";
-        string memory image = _generateImage(level);
+        string memory name = string(abi.encodePacked("Eason Fan #", tokenId.toString()));
+        string memory description = "Official Fan Badge for the Eason Music Community on Monad. This badge represents your unique identity and contribution to Eason's musical journey.";
+        string memory image = _generateImage(level, role);
 
         string memory json = Base64.encode(
             bytes(
@@ -51,8 +62,12 @@ contract FanBadgeNFT is ERC721, ERC721Enumerable, Ownable {
                     abi.encodePacked(
                         '{"name": "', name, 
                         '", "description": "', description, 
-                        '", "attributes": [{"trait_type": "Level", "value": ', level.toString(), 
-                        '}], "image": "data:image/svg+xml;base64,', Base64.encode(bytes(image)), '"}'
+                        '", "attributes": [',
+                        '{"trait_type": "Creator", "value": "Eason Chan"},',
+                        '{"trait_type": "Level", "value": ', level.toString(), '},',
+                        '{"trait_type": "Role", "value": "', role, '"},',
+                        '{"trait_type": "Join Date", "display_type": "date", "value": ', mintTimestamps[tokenId].toString(), '}',
+                        '], "image": "data:image/svg+xml;base64,', Base64.encode(bytes(image)), '"}'
                     )
                 )
             )
@@ -61,15 +76,26 @@ contract FanBadgeNFT is ERC721, ERC721Enumerable, Ownable {
         return string(abi.encodePacked("data:application/json;base64,", json));
     }
 
-    function _generateImage(uint256 level) internal pure returns (string memory) {
-        string memory color = level > 5 ? "#A855F7" : (level > 2 ? "#06B6D4" : "#64748B");
+    function _generateImage(uint256 level, string memory role) internal pure returns (string memory) {
+        string memory color = level >= 10 ? "#EF4444" : (level >= 7 ? "#A855F7" : (level >= 5 ? "#F59E0B" : (level >= 3 ? "#3B82F6" : "#10B981")));
         return string(
             abi.encodePacked(
                 '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 350 350">',
-                '<style>.base { fill: white; font-family: serif; font-size: 24px; }</style>',
-                '<rect width="100%" height="100%" fill="', color, '" />',
-                '<text x="50%" y="40%" class="base" dominant-baseline="middle" text-anchor="middle">Monad Fan</text>',
-                '<text x="50%" y="60%" class="base" dominant-baseline="middle" text-anchor="middle">Level ', level.toString(), '</text>',
+                '<defs>',
+                '<linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">',
+                '<stop offset="0%" style="stop-color:', color, ';stop-opacity:1" />',
+                '<stop offset="100%" style="stop-color:#000000;stop-opacity:1" />',
+                '</linearGradient>',
+                '</defs>',
+                '<rect width="100%" height="100%" rx="20" fill="url(#grad1)" />',
+                '<rect x="10" y="10" width="330" height="330" rx="15" fill="none" stroke="white" stroke-width="1" stroke-opacity="0.2" />',
+                '<text x="50%" y="25%" fill="white" font-family="sans-serif" font-weight="900" font-size="24" dominant-baseline="middle" text-anchor="middle" letter-spacing="2">EASON CHAN</text>',
+                '<text x="50%" y="35%" fill="white" fill-opacity="0.6" font-family="sans-serif" font-size="12" dominant-baseline="middle" text-anchor="middle">FAN COMMUNITY PASS</text>',
+                '<circle cx="50%" cy="58%" r="45" fill="white" fill-opacity="0.1" stroke="white" stroke-width="2" />',
+                '<text x="50%" y="58%" fill="white" font-family="sans-serif" font-weight="900" font-size="42" dominant-baseline="middle" text-anchor="middle">', level.toString(), '</text>',
+                '<text x="50%" y="78%" fill="white" font-family="sans-serif" font-weight="bold" font-size="18" dominant-baseline="middle" text-anchor="middle">', role, '</text>',
+                '<path d="M 50 280 L 300 280" stroke="white" stroke-width="1" stroke-opacity="0.3" />',
+                '<text x="50%" y="310%" fill="white" fill-opacity="0.5" font-family="monospace" font-size="10" dominant-baseline="middle" text-anchor="middle">MONAD TESTNET | VERIFIED FAN</text>',
                 '</svg>'
             )
         );

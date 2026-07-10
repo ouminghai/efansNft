@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAccount, usePublicClient, useReadContract, useWriteContract } from "wagmi";
 import { FAN_BADGE_NFT_ABI, FAN_BADGE_NFT_ADDRESS } from "../constants/abis";
-import { Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { Loader2, ShieldCheck, Sparkles, UserCheck, CalendarDays } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { monadTestnet } from "../lib/chains";
 import { pushActivity } from "../lib/activity";
@@ -51,7 +51,14 @@ export const BadgeCard = () => {
 
   const isLoading = isBalanceLoading || (!!balance && BigInt(balance) > 0n && tokenId === undefined) || (tokenId !== undefined && isURILoading);
 
-  const badgeLevel = useMemo(() => metadata?.attributes?.[0]?.value || 1, [metadata]);
+  const badgeAttributes = useMemo(() => {
+    if (!metadata?.attributes) return { level: 1, role: "Silver Fan", joinDate: "Recently" };
+    const level = metadata.attributes.find(a => a.trait_type === "Level")?.value || 1;
+    const role = metadata.attributes.find(a => a.trait_type === "Role")?.value || "Silver Fan";
+    const joinTs = metadata.attributes.find(a => a.trait_type === "Join Date")?.value;
+    const joinDate = joinTs ? new Date(Number(joinTs) * 1000).toLocaleDateString() : "Recently";
+    return { level, role, joinDate };
+  }, [metadata]);
 
   useEffect(() => {
     if (typeof tokenURI === "string") {
@@ -87,11 +94,11 @@ export const BadgeCard = () => {
       pushActivity({
         kind: "mint",
         title: "Badge minted",
-        detail: "Your on-chain fan identity is now live on Monad Testnet.",
+        detail: "Joined the Eason Fan Community on Monad Testnet.",
         txHash: hash,
       });
 
-      toast.success("Badge minted successfully.", { id: "mint-badge" });
+      toast.success("Welcome to the community!", { id: "mint-badge" });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Mint failed.";
       toast.error(message, { id: "mint-badge" });
@@ -114,37 +121,51 @@ export const BadgeCard = () => {
     return (
       <div className="p-8 text-center bg-zinc-900/50 rounded-2xl border border-zinc-800 border-dashed">
         <ShieldCheck className="w-12 h-12 mx-auto mb-4 text-zinc-600" />
-        <h3 className="text-lg font-semibold text-white mb-2">No Badge Found</h3>
-        <p className="text-zinc-400 text-sm mb-6">Mint your first fan badge to activate your fan profile and start earning points.</p>
+        <h3 className="text-lg font-semibold text-white mb-2">Join the Community</h3>
+        <p className="text-zinc-400 text-sm mb-6">Claim your exclusive Eason Fan Badge to unlock interactions and rewards.</p>
         <button
           className="inline-flex items-center gap-2 rounded-full bg-purple-600 px-6 py-2 font-semibold text-white transition-all hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isMinting}
           onClick={handleMint}
         >
           {isMinting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          初始化勋章
+          Mint Fan Badge
         </button>
       </div>
     );
   }
 
   return (
-    <div className="relative group overflow-hidden bg-zinc-900 rounded-2xl border border-zinc-800 hover:border-purple-500/50 transition-all duration-500">
-      <div className="aspect-square w-full bg-zinc-800 flex items-center justify-center overflow-hidden">
+    <div className="relative group overflow-hidden bg-zinc-900 rounded-2xl border border-zinc-800 hover:border-purple-500/50 transition-all duration-500 shadow-xl shadow-purple-500/5">
+      <div className="aspect-square w-full bg-zinc-800 flex items-center justify-center overflow-hidden border-b border-zinc-800">
         {metadata?.image ? (
-          <img src={metadata.image} alt="Fan Badge" className="w-full h-full object-cover" />
+          <img src={metadata.image} alt="Fan Badge" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-purple-900/20 to-cyan-900/20" />
         )}
       </div>
-      <div className="p-4 bg-zinc-900/90 backdrop-blur-sm">
-        <div className="flex justify-between items-center mb-1">
-          <h3 className="text-lg font-bold text-white">{metadata?.name || "Fan Badge"}</h3>
-          <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs font-bold rounded-full border border-purple-500/30">
-            LVL {badgeLevel}
+      <div className="p-5 bg-zinc-900/90 backdrop-blur-sm">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-xl font-bold text-white tracking-tight">{metadata?.name || "Fan Badge"}</h3>
+          <span className="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-black rounded-full border border-purple-500/30">
+            LVL {badgeAttributes.level}
           </span>
         </div>
-        <p className="text-zinc-400 text-xs line-clamp-2">{metadata?.description}</p>
+        
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center gap-2 text-zinc-400 text-sm">
+            <UserCheck className="w-4 h-4 text-purple-500" />
+            <span>{badgeAttributes.role}</span>
+          </div>
+          <div className="flex items-center gap-2 text-zinc-400 text-sm">
+            <CalendarDays className="w-4 h-4 text-purple-500" />
+            <span>Joined: {badgeAttributes.joinDate}</span>
+          </div>
+        </div>
+        
+        <p className="text-zinc-500 text-xs leading-relaxed line-clamp-2 border-t border-zinc-800/50 pt-3">
+          {metadata?.description}
+        </p>
       </div>
     </div>
   );

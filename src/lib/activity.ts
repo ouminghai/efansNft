@@ -1,4 +1,4 @@
-export type ActivityKind = "mint" | "checkIn" | "like" | "song" | "vote" | "upgrade";
+export type ActivityKind = "mint" | "checkIn" | "like" | "song" | "vote" | "upgrade" | "donate";
 
 export type ActivityItem = {
   id: string;
